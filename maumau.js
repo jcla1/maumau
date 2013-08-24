@@ -2,7 +2,7 @@ var dummy_player = {
   name: "dummy",
   respond: function(turn_obj) {
     function playable_cards(cards, top) {
-      playable = []
+      playable = [];
 
       for (var i = 0; i < cards.length; i++) {
         if (
@@ -10,11 +10,11 @@ var dummy_player = {
           && !(top[0][0] === "J" && cards[i][0] === "J")
           && (turn_obj.wish_suit === "" || turn_obj.wish_suit === cards[i][1])
           ) {
-          playable.push(cards[i])
+          playable.push(cards[i]);
         }
       }
 
-      return playable
+      return playable;
     }
 
     /*
@@ -35,7 +35,7 @@ var dummy_player = {
     //return_obj.take_cards = true;
     //return return_obj;
 
-    var playables = playable_cards(turn_obj.hand, turn_obj.stack[0])
+    var playables = playable_cards(turn_obj.hand, turn_obj.stack[0]);
 
     if (turn_obj.draw_counter !== 0) {
       return_obj.take_cards = true;
@@ -53,13 +53,13 @@ var dummy_player = {
 
     return return_obj;
   }
-}
+};
 
 var seven_player = {
   name: "seven",
   respond: function(turn_obj) {
     function playable_cards(cards, top) {
-      playable = []
+      playable = [];
 
       for (var i = 0; i < cards.length; i++) {
         if (
@@ -67,11 +67,11 @@ var seven_player = {
           && !(top[0][0] === "J" && cards[i][0] === "J")
           && (turn_obj.wish_suit === "" || turn_obj.wish_suit === cards[i][1])
           ) {
-          playable.push(cards[i])
+          playable.push(cards[i]);
         }
       }
 
-      return playable
+      return playable;
     }
 
     /*
@@ -92,7 +92,8 @@ var seven_player = {
     //return_obj.take_cards = true;
     //return return_obj;
 
-    var playables = playable_cards(turn_obj.hand, turn_obj.stack[0])
+    var playables = playable_cards(turn_obj.hand, turn_obj.stack[0]);
+
     for (var i = 0; i < playables.length; i++) {
       if (playables[i][0] === "7") {
         return_obj.card = playables[i];
@@ -101,7 +102,7 @@ var seven_player = {
     }
 
 
-    if (turn_obj.draw_counter !== 0 && return_obj.card == null) {
+    if (turn_obj.draw_counter !== 0 && return_obj.card === null) {
       return_obj.take_cards = true;
       return return_obj;
     }
@@ -111,22 +112,13 @@ var seven_player = {
       return return_obj;
     }
 
-    if (return_obj.card == null) var c = playables[0];
-    if (return_obj.card == null && c[0] === "J") return_obj.wish_suit = c[1];
-    if (return_obj.card == null) return_obj.card = c;
+    if (return_obj.card === null) var c = playables[0];
+    if (return_obj.card === null && c[0] === "J") return_obj.wish_suit = c[1];
+    if (return_obj.card === null) return_obj.card = c;
 
     return return_obj;
   }
-}
-
-HEARTS  = "H"
-SPADES  = "S"
-CLUBS   = "C"
-DIMONDS = "D"
-
-SUITS = [HEARTS, SPADES, CLUBS, DIMONDS]
-
-CARD_VALUES = [7, 8, 9, "T", "J", "Q", "K", "A"]
+};
 
 function Card(val, suit) {
   this.val = "" + val;
@@ -134,11 +126,11 @@ function Card(val, suit) {
 }
 
 Card.prototype.is_suit = function(card) {
-  return this.suit == card.suit;
+  return this.suit === card.suit;
 }
 
 Card.prototype.is_value = function(card) {
-  return this.val == card.val;
+  return this.val === card.val;
 }
 
 Card.prototype.familiar = function(card) {
@@ -215,6 +207,15 @@ function Deck() {}
 Deck.prototype = new CardStore();
 
 Deck.prototype.init_deck = function() {
+  HEARTS  = "H";
+  SPADES  = "S";
+  CLUBS   = "C";
+  DIMONDS = "D";
+
+  SUITS = [HEARTS, SPADES, CLUBS, DIMONDS];
+
+  CARD_VALUES = [7, 8, 9, "T", "J", "Q", "K", "A"];
+
   for (var i = 0; i < CARD_VALUES.length; i++) {
     for (var j = 0; j < SUITS.length; j++) {
       this.cards.push(new Card(CARD_VALUES[i], SUITS[j]));
@@ -281,7 +282,7 @@ GameMaster.prototype.deal_cards = function() {
 
 GameMaster.prototype.advance_player_index = function() {
   this.player_index += 1;
-  if (this.player_index == this.players.length) this.player_index = 0;
+  if (this.player_index === this.players.length) this.player_index = 0;
 }
 
 GameMaster.prototype.refill_deck = function() {
@@ -356,9 +357,7 @@ GameMaster.prototype.game_step = function() {
     wish_suit: this.state.wish_suit
   });
 
-  if (!this.is_valid_move(response)) {
-    throw "Invalid move by player!";
-  }
+  if (!this.is_valid_move(response)) throw "Invalid move by player!";
 
   if (response.take_cards) {
     p.hand.add_cards(this.deck.draw_cards(this.state.draw_counter));
@@ -371,7 +370,7 @@ GameMaster.prototype.game_step = function() {
       wish_suit: this.state.wish_suit
     });
 
-    if (!this.is_valid_move(response)) throw "Invalid move by player!"
+    if (!this.is_valid_move(response)) throw "Invalid move by player!";
 
   }
 
@@ -385,7 +384,7 @@ GameMaster.prototype.game_step = function() {
       wish_suit: this.state.wish_suit
     });
 
-    if (!this.is_valid_move(response)) throw "Invalid move by player!"
+    if (!this.is_valid_move(response)) throw "Invalid move by player!";
 
     // If the player still can't go
     // move onto the next player.
@@ -418,7 +417,7 @@ GameMaster.prototype.game_step = function() {
 
 GameMaster.prototype.player_has_no_cards = function() {
   for (var i = 0; i < this.players.length; i++) {
-    if (this.players[i].hand.num_cards() == 0) return true;
+    if (this.players[i].hand.num_cards() === 0) return true;
   }
 
   return false;
@@ -433,7 +432,7 @@ GameMaster.prototype.game_loop = function() {
   }
 
   for (var j = 0; j < this.players.length; j++) {
-    if (this.players[j].hand.num_cards() == 0) {
+    if (this.players[j].hand.num_cards() === 0) {
       winner = this.players[j].obj.name;
       break;
     }
