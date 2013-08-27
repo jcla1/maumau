@@ -1,0 +1,3 @@
+[submodule "qmacro_python_player"]
+	path = qmacro_python_player
+	url = https://gist.github.com/0d56e8a5c6085b36395e.git
