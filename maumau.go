@@ -1,52 +1,73 @@
 package main
 
-const (
-	SEVEN valueType = iota
-	EIGHT
-	NINE
-	TEN
-	JACK
-	QUEEN
-	KING
+import (
+	"encoding/json"
+	"net/http"
 )
 
-const (
-	HEARTS suitType = iota
-	SPADES
-	CLUBS
-	DIAMONDS
-)
-
-type suitType uint8
-type valueType uint8
-
-type Card struct {
-	Suit  suitType
-	Value valueType
+type Turn struct {
+	Stack       []string `json:"stack"`
+	Hand        []string `json:"hand"`
+	WishSuit    string   `json:"wish_suit"`
+	DrawCounter uint     `json:"draw_counter"`
 }
 
-func NewCard(suit suitType, value valueType) *Card {
-	return &Card{
-		Suit:  suit,
-		Value: value,
+type Response struct {
+	CantGo    bool    `json:"cant_go"`
+	TakeCards bool    `json:"take_cards"`
+	Card      *string `json:"card"` // This is a pointer so it can be json encoded as "null"
+	WishSuit  string  `json:"wish_suit"`
+}
+
+func respond(turn Turn) Response {
+	r := Response{}
+
+	if turn.DrawCounter != 0 {
+		r.TakeCards = true
+		return r
 	}
-}
 
-func (c *Card) isSuit(otherCard *Card) bool {
-	return c.Suit == otherCard.Suit
-}
+	top := turn.Stack[0]
+	var playables []string
 
-func (c *Card) isValue(otherCard *Card) bool {
-	return c.Value == otherCard.Value
-}
-
-func (c *Card) isSpecial() bool {
-	if c.Value == SEVEN || c.Value == EIGHT || c.Value == JACK {
-		return true
+	for _, card := range turn.Hand {
+		if (card[0] == top[0] || card[1] == top[1]) && !(top[0] == 74 && card[0] == 74) && (turn.WishSuit == "" || turn.WishSuit == card[1:]) {
+			playables = append(playables, card)
+		}
 	}
-	return false
+
+	if len(playables) == 0 {
+		r.CantGo = true
+		return r
+	}
+
+	r.Card = &playables[0]
+	if (*r.Card)[0] == 74 {
+		//r.WishSuit = (*r.Card)[1:]
+		r.WishSuit = "H"
+	}
+
+	return r
 }
 
-func (c *Card) familiar(otherCard *Card) bool {
-	return c.isSuit(otherCard) || c.isValue(otherCard)
+func main() {
+	http.HandleFunc("/turn", func(w http.ResponseWriter, req *http.Request) {
+		decoder := json.NewDecoder(req.Body)
+		var turn Turn
+		err := decoder.Decode(&turn)
+		if err != nil {
+			panic(err)
+		}
+
+		res := respond(turn)
+
+    encoder := json.NewEncoder(w)
+    err = encoder.Encode(res)
+    if err != nil {
+      panic(err)
+    }
+
+	})
+
+	http.ListenAndServe(":8080", nil)
 }

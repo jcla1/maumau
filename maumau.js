@@ -190,9 +190,13 @@ GameMaster.prototype.can_player_go = function() {
 
   for (var i = 0; i < cards.length; i++) {
     if (
-    (cards[i].val === this.stack.cards[0].val || cards[i].suit === this.stack.cards[0].suit)
+    (((cards[i].val === this.stack.cards[0].val || cards[i].suit === this.stack.cards[0].suit) && this.state.wish_suit === "")
+    || (this.state.wish_suit === cards[i].suit))
     && !(this.stack.cards[0].val === "J" && cards[i].val === "J")
-    && (this.state.wish_suit === "" || this.state.wish_suit === cards[i].suit)
+
+    /*(cards[i].val === this.stack.cards[0].val || cards[i].suit === this.stack.cards[0].suit)
+    && !(this.stack.cards[0].val === "J" && cards[i].val === "J")
+    && (this.state.wish_suit === "" || this.state.wish_suit === cards[i].suit)*/
     ) {
       return true;
     }
@@ -342,8 +346,8 @@ var num_turns = [];
 
 for (var i = 0; i < 50; i++) {
   var a = new GameMaster();
-  //a.add_player(dummy_player);
-  a.add_player(net_player);
+  //a.add_player(net_player);
+  a.add_player(dummy_player);
   a.add_player(dummy_player);
   a.players.sort(function() { return 0.5 - Math.random(); });
   a.deal_cards();

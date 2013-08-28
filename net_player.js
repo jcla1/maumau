@@ -2,7 +2,7 @@ var httpsync = require('httpsync');
 
 module.exports = {
   name: "net",
-  url: "http://localhost:8080/",
+  url: "http://localhost:8080/turn",
   respond: function(turn) {
     var req = httpsync.request({
       url: this.url,
