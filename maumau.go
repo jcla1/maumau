@@ -31,7 +31,7 @@ func respond(turn Turn) Response {
 	var playables []string
 
 	for _, card := range turn.Hand {
-		if (card[0] == top[0] || card[1] == top[1]) && !(top[0] == 74 && card[0] == 74) && (turn.WishSuit == "" || turn.WishSuit == card[1:]) {
+		if (((card[0] == top[0] || card[1] == top[1]) && turn.WishSuit == "") || (turn.WishSuit == card[1:])) && !(top[0] == 74 && card[0] == 74) {
 			playables = append(playables, card)
 		}
 	}
@@ -43,8 +43,7 @@ func respond(turn Turn) Response {
 
 	r.Card = &playables[0]
 	if (*r.Card)[0] == 74 {
-		//r.WishSuit = (*r.Card)[1:]
-		r.WishSuit = "H"
+		r.WishSuit = (*r.Card)[1:]
 	}
 
 	return r
@@ -61,11 +60,11 @@ func main() {
 
 		res := respond(turn)
 
-    encoder := json.NewEncoder(w)
-    err = encoder.Encode(res)
-    if err != nil {
-      panic(err)
-    }
+		encoder := json.NewEncoder(w)
+		err = encoder.Encode(res)
+		if err != nil {
+			panic(err)
+		}
 
 	})
 
