@@ -1,3 +1,6 @@
 [submodule "qmacro_python_player"]
 	path = qmacro_python_player
 	url = https://gist.github.com/0d56e8a5c6085b36395e.git
+[submodule "jcla1_go_player"]
+	path = jcla1_go_player
+	url = git@gist.github.com:6367681.git
